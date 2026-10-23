@@ -7,7 +7,7 @@
 **原生 · 便携 · 去中心化的 Minecraft Java 启动器**  
 **A native, portable, decentralized launcher for Minecraft: Java Edition**
 
-[简体中文](#简体中文) · [English](#english) · [GPL-3.0](LICENSE)
+[简体中文](#简体中文) · [English](#english) · [最新发布](https://github.com/QiuSui1145/QSLauncher/releases) · [GPL-3.0](LICENSE)
 
 ![.NET 10](https://img.shields.io/badge/.NET-10-512BD4?logo=dotnet&logoColor=white)
 ![Windows](https://img.shields.io/badge/platform-Windows%2010%2F11-0078D4?logo=windows&logoColor=white)
