@@ -1,0 +1,38 @@
+# Build output
+bin/
+obj/
+artifacts/
+*.user
+*.suo
+.vs/
+*.tmpdir/
+
+# Runtime / portable data
+data/
+logs/
+*.log
+*.exe
+*.pdb
+*.dll
+
+# Video render output and dependencies
+video/node_modules/
+video/out/
+video/.remotion/
+
+# Local secrets and environment
+.env
+.env.*
+*.pfx
+*.snk
+secrets/
+
+# Internal machine-specific acceptance record
+docs/ACCEPTANCE.md
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/

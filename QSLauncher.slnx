@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/QSLauncher.App/QSLauncher.App.csproj" />
+    <Project Path="src/QSLauncher.Core/QSLauncher.Core.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/QSLauncher.Tests/QSLauncher.Tests.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,345 @@
+<UserControl x:Class="QSLauncher.App.Views.HomeView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignHeight="760" d:DesignWidth="1100"
+             HorizontalContentAlignment="Stretch"
+             VerticalContentAlignment="Stretch">
+    <UserControl.Resources>
+        <Style x:Key="SectionTitle" TargetType="{x:Type TextBlock}">
+            <Setter Property="FontFamily" Value="{DynamicResource DisplayFont}" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        </Style>
+        <Style x:Key="CompactStat" TargetType="{x:Type Border}">
+            <Setter Property="Background" Value="{DynamicResource GlassBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource GlassBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="Padding" Value="15,12" />
+        </Style>
+        <Style x:Key="StatValue" TargetType="{x:Type TextBlock}">
+            <Setter Property="FontFamily" Value="{DynamicResource DisplayFont}" />
+            <Setter Property="FontSize" Value="24" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Margin" Value="0,3,0,0" />
+        </Style>
+        <Style x:Key="StatLabel" TargetType="{x:Type TextBlock}">
+            <Setter Property="FontSize" Value="9.5" />
+            <Setter Property="Foreground" Value="{DynamicResource TextTertiaryBrush}" />
+            <Setter Property="Margin" Value="0,2,0,0" />
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid Margin="0,0,0,12">
+            <StackPanel>
+                <TextBlock Text="DASHBOARD" Style="{StaticResource CaptionText}"
+                           Foreground="{DynamicResource AccentBrush}" FontSize="10" />
+                <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                    <TextBlock Text="{Binding Greeting}" Style="{StaticResource H1Text}" FontSize="30" />
+                    <TextBlock Text="{Binding DataContext.AccountName, RelativeSource={RelativeSource AncestorType=Window}}"
+                               Style="{StaticResource H1Text}" FontSize="30" Margin="8,0,0,0"
+                               Foreground="{DynamicResource TextSecondaryBrush}" />
+                </StackPanel>
+                <TextBlock Text="{Binding TodayText}" Style="{StaticResource CaptionText}"
+                           FontSize="10.5" Margin="0,7,0,0" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
+                <Border Style="{StaticResource Pill}" Padding="11,6" Margin="0,0,8,0">
+                    <StackPanel Orientation="Horizontal">
+                        <Ellipse Width="6" Height="6" Fill="{DynamicResource AccentBrush}"
+                                 VerticalAlignment="Center" Margin="0,0,6,0" />
+                        <TextBlock Text="便携模式" FontSize="9.5" Foreground="{DynamicResource TextSecondaryBrush}" />
+                    </StackPanel>
+                </Border>
+                <Button Content="{Binding LayoutButtonText}" Style="{StaticResource SecondaryButton}"
+                        Height="32" Padding="13,0" FontSize="10"
+                        Command="{Binding ToggleLayoutCommand}"
+                        ToolTip="{Binding LayoutHint}" />
+            </StackPanel>
+        </Grid>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled" Padding="0,0,8,0">
+            <Viewbox Stretch="Uniform" StretchDirection="DownOnly"
+                     HorizontalAlignment="Left" VerticalAlignment="Top">
+            <Canvas x:Name="HomeCanvas" Width="{Binding LayoutWidth}" Height="{Binding LayoutHeight}"
+                    Background="Transparent">
+                <!-- Launch instance -->
+                <Grid Canvas.Left="{Binding LaunchWidget.X}" Canvas.Top="{Binding LaunchWidget.Y}"
+                      Width="{Binding LaunchWidget.Width}" Height="{Binding LaunchWidget.Height}"
+                      Visibility="{Binding LaunchWidget.Visible, Converter={StaticResource BoolToVisibility}}">
+                    <ContentControl Style="{StaticResource FrostedPanel}">
+                        <StackPanel>
+                            <Grid>
+                                <TextBlock Text="启动实例" Style="{StaticResource SectionTitle}" FontSize="15" />
+                                <TextBlock Text="选择一个实例并开始游戏" Style="{StaticResource CaptionText}"
+                                           FontSize="9.5" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                            </Grid>
+
+                            <StackPanel Visibility="{Binding Versions.HasInstances, Converter={StaticResource BoolToVisibility}}"
+                                        Margin="0,13,0,0">
+                                <ComboBox ItemsSource="{Binding Versions.Instances}"
+                                          SelectedItem="{Binding Versions.SelectedInstance, Mode=TwoWay}"
+                                          ToolTip="切换要启动的实例"
+                                          Height="38" FontSize="15"
+                                          FontFamily="{DynamicResource DisplayFont}"
+                                          Background="{DynamicResource InputBrush}"
+                                          BorderBrush="{DynamicResource InputBorderBrush}"
+                                          Padding="9,0">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Name}" FontSize="14"
+                                                       FontWeight="SemiBold"
+                                                       TextTrimming="CharacterEllipsis" />
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                                <TextBlock Text="{Binding Versions.SelectedInstance.VersionLabel}"
+                                           Style="{StaticResource CaptionText}" FontSize="10.5" Margin="0,4,0,0" />
+                                <TextBlock Text="{Binding Versions.SelectedInstance.LastPlayedText}"
+                                           Style="{StaticResource CaptionText}" FontSize="9.5" Margin="0,3,0,0" />
+                                <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
+                                    <Button Content="启动实例" Style="{StaticResource PrimaryButton}" Height="36"
+                                            Padding="24,0" Command="{Binding Versions.PlayInstanceCommand}"
+                                            CommandParameter="{Binding Versions.SelectedInstance}" />
+                                    <Button Content="实例设置" Style="{StaticResource SecondaryButton}" Height="34"
+                                            Padding="14,0" Margin="8,0,0,0"
+                                            Command="{Binding Versions.EditInstanceCommand}"
+                                            CommandParameter="{Binding Versions.SelectedInstance}" />
+                                    <Button Content="内容管理" Style="{StaticResource GhostButton}" Height="34"
+                                            Padding="12,0" Margin="6,0,0,0"
+                                            Command="{Binding NavigateCommand}" CommandParameter="Resources" />
+                                </StackPanel>
+                            </StackPanel>
+
+                            <StackPanel Visibility="{Binding Versions.HasInstances, Converter={StaticResource InverseBoolToVisibility}}"
+                                        Margin="0,16,0,4">
+                                <TextBlock Text="还没有本地实例" FontSize="18" FontWeight="SemiBold" />
+                                <TextBlock Text="下载一个官方版本，或安装整合包。"
+                                           Style="{StaticResource CaptionText}" FontSize="10.5" Margin="0,5,0,0" />
+                                <Button Content="下载版本" Style="{StaticResource PrimaryButton}" Height="36"
+                                        Padding="24,0" HorizontalAlignment="Left" Margin="0,12,0,0"
+                                        Command="{Binding NavigateCommand}" CommandParameter="Downloads" />
+                            </StackPanel>
+                        </StackPanel>
+                    </ContentControl>
+                    <Border Background="#26000000" Visibility="{Binding DataContext.IsEditingLayout, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BoolToVisibility}}"
+                            MouseLeftButtonDown="OnWidgetDragStart" MouseMove="OnWidgetDragMove"
+                            MouseLeftButtonUp="OnWidgetDragEnd" Tag="launch" Cursor="SizeAll">
+                        <Grid>
+                            <Border Background="{DynamicResource AccentBrush}" CornerRadius="5" Padding="6,3"
+                                    HorizontalAlignment="Left" VerticalAlignment="Top" Margin="8">
+                                <TextBlock Text="拖动" FontSize="8" Foreground="{DynamicResource AccentTextBrush}" />
+                            </Border>
+                            <Thumb Tag="launch" Width="16" Height="16" HorizontalAlignment="Right"
+                                   VerticalAlignment="Bottom" Margin="0,0,3,3"
+                                   DragDelta="OnWidgetResize" DragCompleted="OnWidgetResizeEnd"
+                                   Cursor="SizeNWSE">
+                                <Thumb.Template>
+                                    <ControlTemplate TargetType="{x:Type Thumb}">
+                                        <Border Background="{DynamicResource AccentBrush}" CornerRadius="5" />
+                                    </ControlTemplate>
+                                </Thumb.Template>
+                            </Thumb>
+                        </Grid>
+                    </Border>
+                </Grid>
+
+                <!-- Quick actions -->
+                <Grid Canvas.Left="{Binding QuickWidget.X}" Canvas.Top="{Binding QuickWidget.Y}"
+                      Width="{Binding QuickWidget.Width}" Height="{Binding QuickWidget.Height}"
+                      Visibility="{Binding QuickWidget.Visible, Converter={StaticResource BoolToVisibility}}">
+                    <ContentControl Style="{StaticResource FrostedPanel}">
+                        <StackPanel>
+                            <TextBlock Text="快捷操作" Style="{StaticResource SectionTitle}" FontSize="15" />
+                            <Button Content="下载游戏版本" Style="{StaticResource SecondaryButton}" Height="34"
+                                    HorizontalContentAlignment="Left" Padding="11,0" Margin="0,10,0,0"
+                                    Command="{Binding NavigateCommand}" CommandParameter="Downloads" />
+                            <Button Content="安装整合包" Style="{StaticResource SecondaryButton}" Height="34"
+                                    HorizontalContentAlignment="Left" Padding="11,0" Margin="0,5,0,0"
+                                    Command="{Binding InstallModpackCommand}" />
+                            <Button Content="管理 Java" Style="{StaticResource SecondaryButton}" Height="34"
+                                    HorizontalContentAlignment="Left" Padding="11,0" Margin="0,5,0,0"
+                                    Command="{Binding ManageJavaCommand}" />
+                            <Button Content="外观设置" Style="{StaticResource SecondaryButton}" Height="34"
+                                    HorizontalContentAlignment="Left" Padding="11,0" Margin="0,5,0,0"
+                                    Command="{Binding OpenSettingsCommand}" />
+                        </StackPanel>
+                    </ContentControl>
+                    <Border Background="#26000000" Visibility="{Binding DataContext.IsEditingLayout, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BoolToVisibility}}"
+                            MouseLeftButtonDown="OnWidgetDragStart" MouseMove="OnWidgetDragMove"
+                            MouseLeftButtonUp="OnWidgetDragEnd" Tag="quick" Cursor="SizeAll">
+                        <Grid>
+                            <Border Background="{DynamicResource AccentBrush}" CornerRadius="5" Padding="6,3"
+                                    HorizontalAlignment="Left" VerticalAlignment="Top" Margin="8">
+                                <TextBlock Text="拖动" FontSize="8" Foreground="{DynamicResource AccentTextBrush}" />
+                            </Border>
+                            <Thumb Tag="quick" Width="16" Height="16" HorizontalAlignment="Right"
+                                   VerticalAlignment="Bottom" Margin="0,0,3,3"
+                                   DragDelta="OnWidgetResize" DragCompleted="OnWidgetResizeEnd"
+                                   Cursor="SizeNWSE">
+                                <Thumb.Template>
+                                    <ControlTemplate TargetType="{x:Type Thumb}">
+                                        <Border Background="{DynamicResource AccentBrush}" CornerRadius="5" />
+                                    </ControlTemplate>
+                                </Thumb.Template>
+                            </Thumb>
+                        </Grid>
+                    </Border>
+                </Grid>
+
+                <!-- Stats -->
+                <Grid Canvas.Left="{Binding StatsWidget.X}" Canvas.Top="{Binding StatsWidget.Y}"
+                      Width="{Binding StatsWidget.Width}" Height="{Binding StatsWidget.Height}"
+                      Visibility="{Binding StatsWidget.Visible, Converter={StaticResource BoolToVisibility}}">
+                    <UniformGrid Columns="4">
+                        <Border Style="{StaticResource CompactStat}" Margin="0,0,5,0">
+                            <StackPanel>
+                                <TextBlock Text="实例" Style="{StaticResource CaptionText}" FontSize="9" />
+                                <TextBlock Text="{Binding InstanceCountText}" Style="{StaticResource StatValue}" />
+                                <TextBlock Text="实例总库" Style="{StaticResource StatLabel}" />
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource CompactStat}" Margin="5,0,5,0">
+                            <StackPanel>
+                                <TextBlock Text="模组" Style="{StaticResource CaptionText}" FontSize="9" />
+                                <TextBlock Text="{Binding ModCountText}" Style="{StaticResource StatValue}"
+                                           ToolTip="{Binding ModCountHint}" />
+                                <TextBlock Text="当前实例模组" Style="{StaticResource StatLabel}"
+                                           ToolTip="{Binding ModCountHint}" />
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource CompactStat}" Margin="5,0,5,0">
+                            <StackPanel>
+                                <TextBlock Text="Java" Style="{StaticResource CaptionText}" FontSize="9" />
+                                <TextBlock Text="{Binding JavaCountText}" Style="{StaticResource StatValue}" />
+                                <TextBlock Text="便携运行时" Style="{StaticResource StatLabel}" />
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource CompactStat}" Margin="5,0,0,0">
+                            <StackPanel>
+                                <TextBlock Text="占用" Style="{StaticResource CaptionText}" FontSize="9" />
+                                <TextBlock Text="{Binding DiskUsageText}" Style="{StaticResource StatValue}" FontSize="20" />
+                                <TextBlock Text="便携目录" Style="{StaticResource StatLabel}" />
+                            </StackPanel>
+                        </Border>
+                    </UniformGrid>
+                    <Border Background="#26000000" Visibility="{Binding DataContext.IsEditingLayout, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BoolToVisibility}}"
+                            MouseLeftButtonDown="OnWidgetDragStart" MouseMove="OnWidgetDragMove"
+                            MouseLeftButtonUp="OnWidgetDragEnd" Tag="stats" Cursor="SizeAll">
+                        <Grid>
+                            <Border Background="{DynamicResource AccentBrush}" CornerRadius="5" Padding="6,3"
+                                    HorizontalAlignment="Left" VerticalAlignment="Top" Margin="8">
+                                <TextBlock Text="拖动" FontSize="8" Foreground="{DynamicResource AccentTextBrush}" />
+                            </Border>
+                            <Thumb Tag="stats" Width="16" Height="16" HorizontalAlignment="Right"
+                                   VerticalAlignment="Bottom" Margin="0,0,3,3"
+                                   DragDelta="OnWidgetResize" DragCompleted="OnWidgetResizeEnd"
+                                   Cursor="SizeNWSE">
+                                <Thumb.Template>
+                                    <ControlTemplate TargetType="{x:Type Thumb}">
+                                        <Border Background="{DynamicResource AccentBrush}" CornerRadius="5" />
+                                    </ControlTemplate>
+                                </Thumb.Template>
+                            </Thumb>
+                        </Grid>
+                    </Border>
+                </Grid>
+
+                <!-- Recent -->
+                <Grid Canvas.Left="{Binding RecentWidget.X}" Canvas.Top="{Binding RecentWidget.Y}"
+                      Width="{Binding RecentWidget.Width}" Height="{Binding RecentWidget.Height}"
+                      Visibility="{Binding RecentWidget.Visible, Converter={StaticResource BoolToVisibility}}">
+                    <ContentControl Style="{StaticResource FrostedPanel}">
+                        <StackPanel>
+                            <Grid>
+                                <TextBlock Text="最近实例" Style="{StaticResource SectionTitle}" FontSize="15" />
+                                <TextBlock Text="高频操作" Style="{StaticResource CaptionText}"
+                                           FontSize="9.5" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                           TextTrimming="CharacterEllipsis" MaxWidth="180" />
+                            </Grid>
+                            <ScrollViewer Width="{Binding RecentWidget.ContentWidth}"
+                                          MaxHeight="130" VerticalScrollBarVisibility="Auto"
+                                          HorizontalScrollBarVisibility="Disabled" Margin="0,9,0,0">
+                            <ItemsControl ItemsSource="{Binding Versions.Instances}"
+                                          HorizontalContentAlignment="Stretch">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Background="{DynamicResource CardBrush}"
+                                                BorderBrush="{DynamicResource GlassBorderBrush}"
+                                                BorderThickness="1" CornerRadius="9" Padding="11,8"
+                                                Margin="0,0,0,5"
+                                                Width="{Binding DataContext.RecentWidget.ContentWidth, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <StackPanel>
+                                                    <TextBlock Text="{Binding Name}" FontSize="12" FontWeight="SemiBold"
+                                                               TextTrimming="CharacterEllipsis" />
+                                                    <TextBlock Text="{Binding VersionLabel}" Style="{StaticResource CaptionText}"
+                                                               FontSize="9" Margin="0,2,0,0" />
+                                                </StackPanel>
+                                                <StackPanel Grid.Column="1" Orientation="Horizontal"
+                                                            VerticalAlignment="Center">
+                                                    <Button Content="启动实例" Style="{StaticResource PrimaryButton}" Height="27"
+                                                            Padding="11,0" FontSize="9.5"
+                                                            Command="{Binding DataContext.Versions.PlayInstanceCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                            CommandParameter="{Binding}" />
+                                                    <Button Style="{StaticResource IconButton}" Width="27" Height="27"
+                                                            Margin="4,0,0,0" ToolTip="实例设置"
+                                                            Command="{Binding DataContext.Versions.EditInstanceCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                            CommandParameter="{Binding}">
+                                                        <Path Data="{StaticResource IconSettings}"
+                                                              Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                                              StrokeThickness="1.3" Width="11" Height="11" Stretch="Uniform" />
+                                                    </Button>
+                                                </StackPanel>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            </ScrollViewer>
+                            <TextBlock Text="暂无实例，下载后会自动出现在这里。"
+                                       Style="{StaticResource CaptionText}" FontSize="10" Margin="0,7,0,0"
+                                       Visibility="{Binding Versions.HasInstances, Converter={StaticResource InverseBoolToVisibility}}" />
+                        </StackPanel>
+                    </ContentControl>
+                    <Border Background="#26000000" Visibility="{Binding DataContext.IsEditingLayout, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BoolToVisibility}}"
+                            MouseLeftButtonDown="OnWidgetDragStart" MouseMove="OnWidgetDragMove"
+                            MouseLeftButtonUp="OnWidgetDragEnd" Tag="recent" Cursor="SizeAll">
+                        <Grid>
+                            <Border Background="{DynamicResource AccentBrush}" CornerRadius="5" Padding="6,3"
+                                    HorizontalAlignment="Left" VerticalAlignment="Top" Margin="8">
+                                <TextBlock Text="拖动" FontSize="8" Foreground="{DynamicResource AccentTextBrush}" />
+                            </Border>
+                            <Thumb Tag="recent" Width="16" Height="16" HorizontalAlignment="Right"
+                                   VerticalAlignment="Bottom" Margin="0,0,3,3"
+                                   DragDelta="OnWidgetResize" DragCompleted="OnWidgetResizeEnd"
+                                   Cursor="SizeNWSE">
+                                <Thumb.Template>
+                                    <ControlTemplate TargetType="{x:Type Thumb}">
+                                        <Border Background="{DynamicResource AccentBrush}" CornerRadius="5" />
+                                    </ControlTemplate>
+                                </Thumb.Template>
+                            </Thumb>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </Canvas>
+            </Viewbox>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

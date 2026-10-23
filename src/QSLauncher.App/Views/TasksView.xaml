@@ -1,0 +1,145 @@
+<UserControl x:Class="QSLauncher.App.Views.TasksView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignHeight="820" d:DesignWidth="1000"
+             HorizontalContentAlignment="Stretch"
+             VerticalContentAlignment="Stretch">
+    <UserControl.Resources>
+        <Style x:Key="TaskProgress" TargetType="{x:Type ProgressBar}">
+            <Setter Property="Height" Value="5" />
+            <Setter Property="Background" Value="{DynamicResource InputBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource AccentBrush}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ProgressBar}">
+                        <Grid>
+                            <Border Background="{TemplateBinding Background}" CornerRadius="3" />
+                            <Border x:Name="PART_Track" />
+                            <Border x:Name="PART_Indicator" HorizontalAlignment="Left"
+                                    Background="{TemplateBinding Foreground}" CornerRadius="3" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                  Padding="0,0,8,0">
+        <StackPanel MaxWidth="1180">
+            <Grid Margin="0,0,0,18">
+                <StackPanel>
+                    <TextBlock Text="ACTIVITY" Style="{StaticResource CaptionText}"
+                               Foreground="{DynamicResource AccentBrush}" FontSize="10" />
+                    <TextBlock Text="任务中心" Style="{StaticResource H1Text}"
+                               FontSize="30" Margin="0,6,0,0" />
+                    <TextBlock Text="下载、安装与校验状态集中在这里；没有任务时也会保留入口。"
+                               Style="{StaticResource BodyMutedText}" FontSize="12.5" Margin="0,9,0,0" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
+                    <Border Style="{StaticResource Pill}" Padding="12,7">
+                        <StackPanel Orientation="Horizontal">
+                            <Ellipse Width="6" Height="6" Margin="0,0,7,0" VerticalAlignment="Center"
+                                     Fill="{DynamicResource AccentBrush}" />
+                            <TextBlock Text="{Binding Summary}" FontSize="10.5" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Border>
+                    <Button Content="清理已完成" Style="{StaticResource GhostButton}" Height="32"
+                            Padding="13,0" FontSize="10" Margin="8,0,0,0"
+                            Command="{Binding ClearFinishedCommand}" />
+                </StackPanel>
+            </Grid>
+
+            <Border Style="{StaticResource GlassCard}" Padding="26,22"
+                    Visibility="{Binding HasActive, Converter={StaticResource BoolToVisibility}}"
+                    Margin="0,0,0,12">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Border Width="42" Height="42" CornerRadius="12"
+                            Background="{DynamicResource AccentSoftBrush}">
+                        <Path Data="{StaticResource IconDownload}" Width="19" Height="19"
+                              Stroke="{DynamicResource AccentBrush}" StrokeThickness="1.7"
+                              StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                              Stretch="Uniform" />
+                    </Border>
+                    <StackPanel Grid.Column="1" Margin="14,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Text="正在处理" FontSize="13" FontWeight="SemiBold" />
+                        <TextBlock Text="{Binding Summary}" Style="{StaticResource CaptionText}"
+                                   FontSize="10" Margin="0,4,0,0" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <ItemsControl ItemsSource="{Binding Tasks}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Style="{StaticResource GlassCard}" Padding="20,16" Margin="0,0,0,9">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="38" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="120" />
+                                </Grid.ColumnDefinitions>
+                                <Border Width="30" Height="30" CornerRadius="9"
+                                        VerticalAlignment="Top"
+                                        Background="{DynamicResource AccentSoftBrush}">
+                                    <Path Data="{StaticResource IconDownload}" Width="14" Height="14"
+                                          Stroke="{DynamicResource AccentBrush}" StrokeThickness="1.7"
+                                          StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                                          Stretch="Uniform" />
+                                </Border>
+                                <StackPanel Grid.Column="1" Margin="4,0,18,0">
+                                    <TextBlock Text="{Binding Title}" FontSize="12" FontWeight="SemiBold"
+                                               TextTrimming="CharacterEllipsis" />
+                                    <TextBlock Text="{Binding Detail}" Style="{StaticResource CaptionText}"
+                                               FontSize="9.5" Margin="0,4,0,0"
+                                               TextTrimming="CharacterEllipsis" />
+                                    <ProgressBar Style="{StaticResource TaskProgress}" Margin="0,11,0,0"
+                                                 Minimum="0" Maximum="100" Value="{Binding Progress}" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="2" VerticalAlignment="Center"
+                                            HorizontalAlignment="Right">
+                                    <TextBlock Text="{Binding ProgressText}" FontSize="12" FontWeight="SemiBold"
+                                               HorizontalAlignment="Right"
+                                               Foreground="{DynamicResource AccentBrush}" />
+                                    <TextBlock Text="{Binding TimeText}" Style="{StaticResource CaptionText}"
+                                               FontSize="9" Margin="0,4,0,0" HorizontalAlignment="Right" />
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <Border Style="{StaticResource GlassCard}" Padding="28,44" Margin="0,2,0,0"
+                    Visibility="{Binding HasTasks, Converter={StaticResource InverseBoolToVisibility}}">
+                <StackPanel HorizontalAlignment="Center">
+                    <Border Width="58" Height="58" CornerRadius="17"
+                            Background="{DynamicResource AccentSoftBrush}" HorizontalAlignment="Center">
+                        <Path Data="{StaticResource IconTasks}" Width="24" Height="24"
+                              Stroke="{DynamicResource AccentBrush}" StrokeThickness="1.6"
+                              StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                              Stretch="Uniform" />
+                    </Border>
+                    <TextBlock Text="{Binding EmptyTitle}" FontFamily="{DynamicResource DisplayFont}"
+                               FontSize="18" FontWeight="SemiBold" HorizontalAlignment="Center"
+                               Margin="0,16,0,0" />
+                    <TextBlock Text="{Binding EmptyDetail}" Style="{StaticResource BodyMutedText}"
+                               FontSize="11" Margin="0,8,0,0" TextAlignment="Center"
+                               MaxWidth="460" TextWrapping="Wrap" />
+                    <Border Style="{StaticResource Pill}" Padding="12,6" Margin="0,16,0,0"
+                            HorizontalAlignment="Center">
+                        <TextBlock Text="当前无任务" FontSize="9.5" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource TextSecondaryBrush}" />
+                    </Border>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

@@ -1,0 +1,658 @@
+<UserControl x:Class="QSLauncher.App.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignHeight="900" d:DesignWidth="1000"
+             HorizontalContentAlignment="Stretch"
+             VerticalContentAlignment="Stretch">
+
+    <UserControl.Resources>
+        <Style x:Key="SectionTitle" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource H3Text}">
+            <Setter Property="FontSize" Value="17" />
+        </Style>
+        <Style x:Key="SectionHint" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource CaptionText}">
+            <Setter Property="FontSize" Value="10.5" />
+            <Setter Property="Margin" Value="0,4,0,0" />
+        </Style>
+        <Style x:Key="CardStack" TargetType="{x:Type StackPanel}">
+            <Setter Property="Margin" Value="0,0,0,14" />
+        </Style>
+
+        <Style x:Key="ThemeCard" TargetType="{x:Type RadioButton}">
+            <Setter Property="Background" Value="{DynamicResource InputBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource InputBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RadioButton}">
+                        <Border x:Name="Root"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="11" Padding="12,11">
+                            <ContentPresenter />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource TextTertiaryBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                                <Setter TargetName="Root" Property="Background" Value="{DynamicResource AccentSoftBrush}" />
+                                <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SegmentRadio" TargetType="{x:Type RadioButton}">
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RadioButton}">
+                        <Border x:Name="Root" Background="Transparent" CornerRadius="6" Padding="11,5">
+                            <ContentPresenter />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Root" Property="Background" Value="{DynamicResource NavHoverBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Root" Property="Background" Value="{DynamicResource AccentSoftBrush}" />
+                                <Setter Property="Foreground" Value="{DynamicResource AccentBrush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SwatchButton" TargetType="{x:Type Button}">
+            <Setter Property="Width" Value="34" />
+            <Setter Property="Height" Value="34" />
+            <Setter Property="Margin" Value="0,0,8,8" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="Swatch" Background="{TemplateBinding Background}"
+                                BorderBrush="#33FFFFFF" BorderThickness="1"
+                                CornerRadius="10" />
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Swatch" Property="BorderBrush" Value="{DynamicResource TextPrimaryBrush}" />
+                                <Setter TargetName="Swatch" Property="BorderThickness" Value="2" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Swatch" Property="Opacity" Value="0.7" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled"
+                  Padding="0,0,8,0">
+        <StackPanel MaxWidth="1180">
+            <Grid Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Text="WORKSPACE" Style="{StaticResource CaptionText}"
+                               Foreground="{DynamicResource AccentBrush}" FontSize="10" />
+                    <TextBlock Text="设置" Style="{StaticResource H1Text}" FontSize="31" Margin="0,6,0,0" />
+                    <TextBlock Text="调整主题、背景和面板材质。所有改动即时生效，并保存在便携目录中。"
+                               Style="{StaticResource BodyMutedText}" FontSize="12.5" Margin="0,8,0,0" />
+                </StackPanel>
+                <Border HorizontalAlignment="Right" VerticalAlignment="Top"
+                        Background="{DynamicResource GlassBrush}"
+                        BorderBrush="{DynamicResource GlassBorderBrush}"
+                        BorderThickness="1" CornerRadius="20" Padding="11,6" Margin="0,5,0,0">
+                    <StackPanel Orientation="Horizontal">
+                        <Ellipse Width="6" Height="6" Fill="{DynamicResource SuccessBrush}"
+                                 VerticalAlignment="Center" />
+                        <TextBlock Text="自动保存" FontSize="10.5" Margin="7,0,0,0"
+                                   Foreground="{DynamicResource TextSecondaryBrush}" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <Border CornerRadius="10" Padding="12,9" Margin="0,0,0,14"
+                    Visibility="{Binding HasStatus, Converter={StaticResource BoolToVisibility}}">
+                <Border.Style>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="Background" Value="{DynamicResource AccentSoftBrush}" />
+                        <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                        <Setter Property="BorderThickness" Value="1" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding StatusIsError}" Value="True">
+                                <Setter Property="Background" Value="#22FF6B6B" />
+                                <Setter Property="BorderBrush" Value="#88FF6B6B" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <StackPanel Orientation="Horizontal">
+                    <Path Data="{StaticResource IconInfo}"
+                          Stroke="{DynamicResource TextSecondaryBrush}"
+                          StrokeThickness="1.5" Width="14" Height="14" Stretch="Uniform"
+                          VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding StatusMessage}" FontSize="11.5" Margin="8,0,0,0"
+                               VerticalAlignment="Center" TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1.42*" />
+                    <ColumnDefinition Width="0.82*" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Margin="0,0,14,0">
+                    <!-- Theme -->
+                    <ContentControl Style="{StaticResource FrostedPanel}" Margin="0,0,0,14">
+                        <StackPanel>
+                            <Grid>
+                                <StackPanel>
+                                    <TextBlock Text="主题" Style="{StaticResource SectionTitle}" />
+                                    <TextBlock Text="跟随系统会实时响应 Windows 的浅色 / 深色设置。"
+                                               Style="{StaticResource SectionHint}" />
+                                </StackPanel>
+                                <Path Data="{StaticResource IconPalette}" Stroke="{DynamicResource TextTertiaryBrush}"
+                                      StrokeThickness="1.5" Width="17" Height="17" Stretch="Uniform"
+                                      HorizontalAlignment="Right" VerticalAlignment="Top" />
+                            </Grid>
+
+                            <UniformGrid Columns="3" Margin="0,15,0,0">
+                                <RadioButton Style="{StaticResource ThemeCard}" GroupName="ThemeMode"
+                                             IsChecked="{Binding IsSystemTheme, Mode=TwoWay}"
+                                             Margin="0,0,6,0">
+                                    <StackPanel>
+                                        <Path Data="{StaticResource IconMonitor}"
+                                              Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}"
+                                              StrokeThickness="1.5" Width="16" Height="16"
+                                              Stretch="Uniform" HorizontalAlignment="Left" />
+                                        <TextBlock Text="跟随系统" FontSize="12" FontWeight="SemiBold"
+                                                   Margin="0,9,0,0" />
+                                        <TextBlock Text="自动" FontSize="10" Foreground="{DynamicResource TextTertiaryBrush}"
+                                                   Margin="0,2,0,0" />
+                                    </StackPanel>
+                                </RadioButton>
+                                <RadioButton Style="{StaticResource ThemeCard}" GroupName="ThemeMode"
+                                             IsChecked="{Binding IsDarkTheme, Mode=TwoWay}"
+                                             Margin="3,0,3,0">
+                                    <StackPanel>
+                                        <Path Data="{StaticResource IconMoon}"
+                                              Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}"
+                                              StrokeThickness="1.5" Width="16" Height="16"
+                                              Stretch="Uniform" HorizontalAlignment="Left" />
+                                        <TextBlock Text="深岩" FontSize="12" FontWeight="SemiBold"
+                                                   Margin="0,9,0,0" />
+                                        <TextBlock Text="深色" FontSize="10" Foreground="{DynamicResource TextTertiaryBrush}"
+                                                   Margin="0,2,0,0" />
+                                    </StackPanel>
+                                </RadioButton>
+                                <RadioButton Style="{StaticResource ThemeCard}" GroupName="ThemeMode"
+                                             IsChecked="{Binding IsLightTheme, Mode=TwoWay}"
+                                             Margin="6,0,0,0">
+                                    <StackPanel>
+                                        <Path Data="{StaticResource IconSun}"
+                                              Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}"
+                                              StrokeThickness="1.5" Width="16" Height="16"
+                                              Stretch="Uniform" HorizontalAlignment="Left" />
+                                        <TextBlock Text="浅色" FontSize="12" FontWeight="SemiBold"
+                                                   Margin="0,9,0,0" />
+                                        <TextBlock Text="明亮" FontSize="10" Foreground="{DynamicResource TextTertiaryBrush}"
+                                                   Margin="0,2,0,0" />
+                                    </StackPanel>
+                                </RadioButton>
+                            </UniformGrid>
+                        </StackPanel>
+                    </ContentControl>
+
+                    <!-- Accent -->
+                    <ContentControl Style="{StaticResource FrostedPanel}" Margin="0,0,0,14">
+                        <StackPanel>
+                            <TextBlock Text="强调色" Style="{StaticResource SectionTitle}" />
+                            <TextBlock Text="选择一枚色种，或输入自己的颜色。文字对比度会自动校正。"
+                                       Style="{StaticResource SectionHint}" />
+
+                            <ItemsControl ItemsSource="{Binding AccentPresets}" Margin="0,14,0,0">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button Style="{StaticResource SwatchButton}"
+                                                Background="{Binding Brush}"
+                                                ToolTip="{Binding Name}"
+                                                Command="{Binding DataContext.SelectAccentCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                CommandParameter="{Binding}" />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <Grid Margin="0,7,0,0">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBox Style="{StaticResource ModernTextBox}" Width="142"
+                                             Text="{Binding AccentInput, UpdateSourceTrigger=PropertyChanged}"
+                                             FontFamily="{DynamicResource MonoFont}" FontSize="11.5"
+                                             VerticalContentAlignment="Center" />
+                                    <Button Style="{StaticResource SecondaryButton}"
+                                            Command="{Binding ApplyAccentCommand}" Content="应用"
+                                            Padding="15,8" Margin="7,0,0,0" />
+                                </StackPanel>
+                                <TextBlock Text="{Binding CurrentAccentHex}"
+                                           HorizontalAlignment="Right" VerticalAlignment="Center"
+                                           Style="{StaticResource MonoText}" FontSize="10.5"
+                                           Foreground="{DynamicResource TextTertiaryBrush}" />
+                            </Grid>
+                        </StackPanel>
+                    </ContentControl>
+
+                    <!-- Background -->
+                    <ContentControl Style="{StaticResource FrostedPanel}" Margin="0,0,0,14">
+                        <StackPanel>
+                            <Grid>
+                                <StackPanel>
+                                    <TextBlock Text="背景" Style="{StaticResource SectionTitle}" />
+                                    <TextBlock Text="使用本地图片或视频作为窗口背景，文件会复制到便携目录。"
+                                               Style="{StaticResource SectionHint}" />
+                                </StackPanel>
+                                <Path Data="{StaticResource IconImage}" Stroke="{DynamicResource TextTertiaryBrush}"
+                                      StrokeThickness="1.5" Width="17" Height="17" Stretch="Uniform"
+                                      HorizontalAlignment="Right" VerticalAlignment="Top" />
+                            </Grid>
+
+                            <UniformGrid Columns="2" Margin="0,14,0,0">
+                                <Button Style="{StaticResource SecondaryButton}"
+                                        Command="{Binding SelectImageCommand}"
+                                        AutomationProperties.Name="选择图片"
+                                        AutomationProperties.AutomationId="SelectImageButton"
+                                        HorizontalContentAlignment="Left" Padding="12,9" Margin="0,0,5,0">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Data="{StaticResource IconImage}"
+                                              Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                              StrokeThickness="1.6" Width="15" Height="15" Stretch="Uniform"
+                                              VerticalAlignment="Center" />
+                                        <TextBlock Text="选择图片" FontSize="11.5" Margin="8,0,0,0" />
+                                    </StackPanel>
+                                </Button>
+                                <Button Style="{StaticResource SecondaryButton}"
+                                        Command="{Binding SelectVideoCommand}"
+                                        HorizontalContentAlignment="Left" Padding="12,9" Margin="5,0,0,0">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Data="{StaticResource IconVideo}"
+                                              Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                              StrokeThickness="1.6" Width="15" Height="15" Stretch="Uniform"
+                                              VerticalAlignment="Center" />
+                                        <TextBlock Text="选择视频" FontSize="11.5" Margin="8,0,0,0" />
+                                    </StackPanel>
+                                </Button>
+                            </UniformGrid>
+
+                            <Border Background="{DynamicResource InputBrush}" BorderBrush="{DynamicResource InputBorderBrush}"
+                                    BorderThickness="1" CornerRadius="9" Padding="11,8" Margin="0,9,0,0">
+                                <Grid>
+                                    <StackPanel Margin="0,0,34,0">
+                                        <TextBlock Text="{Binding BackgroundModeText}" FontSize="11" FontWeight="Medium" />
+                                        <TextBlock Text="{Binding BackgroundPathDisplay}"
+                                                   ToolTip="{Binding BackgroundPathFull}"
+                                                   FontSize="10" Foreground="{DynamicResource TextTertiaryBrush}"
+                                                   TextTrimming="CharacterEllipsis" Margin="0,2,0,0" />
+                                    </StackPanel>
+                                    <Button Style="{StaticResource IconButton}" Width="26" Height="26"
+                                            Command="{Binding ClearBackgroundCommand}"
+                                            IsEnabled="{Binding HasBackground}"
+                                            HorizontalAlignment="Right" ToolTip="清除背景">
+                                        <Path Data="{StaticResource IconTrash}"
+                                              Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                              StrokeThickness="1.5" Width="12" Height="12" Stretch="Uniform" />
+                                    </Button>
+                                </Grid>
+                            </Border>
+
+                            <Grid Margin="0,12,0,0">
+                                <StackPanel>
+                                    <TextBlock Text="左上角 Logo" Style="{StaticResource LabelText}" Margin="0" />
+                                    <TextBlock Text="{Binding LogoPathDisplay}" Style="{StaticResource CaptionText}"
+                                               FontSize="9.5" Margin="0,2,0,0" TextTrimming="CharacterEllipsis" />
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"
+                                            VerticalAlignment="Center">
+                                    <Button Content="选择" Style="{StaticResource GhostButton}" Height="26"
+                                            Padding="9,0" FontSize="10" Command="{Binding SelectLogoCommand}" />
+                                    <Button Content="默认" Style="{StaticResource GhostButton}" Height="26"
+                                            Padding="9,0" FontSize="10" Margin="5,0,0,0"
+                                            Command="{Binding ClearLogoCommand}" />
+                                </StackPanel>
+                            </Grid>
+
+                            <Grid Margin="0,13,0,0">
+                                <TextBlock Text="背景模糊" Style="{StaticResource LabelText}" Margin="0" />
+                                <TextBlock Text="{Binding BackgroundBlur, StringFormat={}{0:0} px}"
+                                           HorizontalAlignment="Right" Style="{StaticResource CaptionText}" FontSize="10.5" />
+                            </Grid>
+                            <Slider Value="{Binding BackgroundBlur, Mode=TwoWay}"
+                                    Style="{StaticResource ModernSlider}" Minimum="0" Maximum="40" />
+
+                            <Grid Margin="0,12,0,0">
+                                <TextBlock Text="显示方式" Style="{StaticResource LabelText}" Margin="0" VerticalAlignment="Center" />
+                                <Border Background="{DynamicResource InputBrush}" BorderBrush="{DynamicResource InputBorderBrush}"
+                                        BorderThickness="1" CornerRadius="8" Padding="2" HorizontalAlignment="Right">
+                                    <StackPanel Orientation="Horizontal">
+                                        <RadioButton Style="{StaticResource SegmentRadio}" GroupName="BackgroundFit"
+                                                     Content="填充" IsChecked="{Binding IsFillFit, Mode=TwoWay}" />
+                                        <RadioButton Style="{StaticResource SegmentRadio}" GroupName="BackgroundFit"
+                                                     Content="适应" IsChecked="{Binding IsFitFit, Mode=TwoWay}" />
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+
+                            <StackPanel Visibility="{Binding IsVideoBackground, Converter={StaticResource BoolToVisibility}}"
+                                        Margin="0,13,0,0">
+                                <Border Height="1" Background="{DynamicResource DividerBrush}" Margin="0,0,0,11" />
+                                <Grid Margin="0,0,0,10">
+                                    <StackPanel>
+                                        <TextBlock Text="静音播放" FontSize="11.5" FontWeight="Medium" />
+                                        <TextBlock Text="视频背景不播放声音。" Style="{StaticResource CaptionText}" FontSize="9.5" />
+                                    </StackPanel>
+                                    <CheckBox Style="{StaticResource SwitchToggle}" IsChecked="{Binding BackgroundMuted, Mode=TwoWay}"
+                                              HorizontalAlignment="Right" VerticalAlignment="Center" />
+                                </Grid>
+                                <Grid Margin="0,0,0,10">
+                                    <StackPanel>
+                                        <TextBlock Text="循环播放" FontSize="11.5" FontWeight="Medium" />
+                                        <TextBlock Text="播放结束后从头开始。" Style="{StaticResource CaptionText}" FontSize="9.5" />
+                                    </StackPanel>
+                                    <CheckBox Style="{StaticResource SwitchToggle}" IsChecked="{Binding BackgroundLoop, Mode=TwoWay}"
+                                              HorizontalAlignment="Right" VerticalAlignment="Center" />
+                                </Grid>
+                                <Grid>
+                                    <StackPanel>
+                                        <TextBlock Text="窗口失焦时暂停" FontSize="11.5" FontWeight="Medium" />
+                                        <TextBlock Text="减少后台解码占用。" Style="{StaticResource CaptionText}" FontSize="9.5" />
+                                    </StackPanel>
+                                    <CheckBox Style="{StaticResource SwitchToggle}"
+                                              IsChecked="{Binding BackgroundPauseWhenInactive, Mode=TwoWay}"
+                                              HorizontalAlignment="Right" VerticalAlignment="Center" />
+                                </Grid>
+                            </StackPanel>
+                        </StackPanel>
+                    </ContentControl>
+
+                    <!-- Glass -->
+                    <ContentControl Style="{StaticResource FrostedPanel}">
+                        <StackPanel>
+                            <Grid>
+                                <StackPanel>
+                                    <TextBlock Text="磨砂材质" Style="{StaticResource SectionTitle}" />
+                                    <TextBlock Text="控制面板的半透明程度与背景柔化强度。"
+                                               Style="{StaticResource SectionHint}" />
+                                </StackPanel>
+                                <Path Data="{StaticResource IconSparkle}" Fill="{DynamicResource TextTertiaryBrush}"
+                                      Width="16" Height="16" Stretch="Uniform"
+                                      HorizontalAlignment="Right" VerticalAlignment="Top" />
+                            </Grid>
+
+                            <Grid Margin="0,14,0,0">
+                                <TextBlock Text="面板透明度" Style="{StaticResource LabelText}" Margin="0" />
+                                <TextBlock Text="{Binding GlassOpacity, StringFormat={}{0:P0}}"
+                                           HorizontalAlignment="Right" Style="{StaticResource CaptionText}" FontSize="10.5" />
+                            </Grid>
+                            <Slider Value="{Binding GlassOpacity, Mode=TwoWay}"
+                                    AutomationProperties.AutomationId="GlassOpacitySlider"
+                                    Style="{StaticResource ModernSlider}" Minimum="0" Maximum="1" />
+                            <Grid Margin="0,9,0,0">
+                                <TextBlock Text="磨砂强度" Style="{StaticResource LabelText}" Margin="0" />
+                                <TextBlock Text="{Binding GlassBlur, StringFormat={}{0:0} 级}"
+                                           HorizontalAlignment="Right" Style="{StaticResource CaptionText}" FontSize="10.5" />
+                            </Grid>
+                            <Slider Value="{Binding GlassBlur, Mode=TwoWay}"
+                                    Style="{StaticResource ModernSlider}" Minimum="0" Maximum="40" />
+
+                            <Border Background="{DynamicResource GlassBrush}"
+                                    BorderBrush="{DynamicResource GlassBorderBrush}"
+                                    BorderThickness="1" CornerRadius="10" Padding="13" Margin="0,13,0,0">
+                                <Grid>
+                                    <StackPanel>
+                                        <TextBlock Text="Frosted surface" FontSize="11.5" FontWeight="SemiBold" />
+                                        <TextBlock Text="面板会保留背景的层次与细节。"
+                                                   Style="{StaticResource CaptionText}" FontSize="9.5" Margin="0,3,0,0" />
+                                    </StackPanel>
+                                    <Border Style="{StaticResource Pill}" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                            Padding="8,3">
+                                        <TextBlock Text="PREVIEW" FontSize="8.5" FontWeight="SemiBold"
+                                                   Foreground="{DynamicResource AccentBrush}" />
+                                    </Border>
+                                </Grid>
+                            </Border>
+
+                            <Border Height="1" Background="{DynamicResource DividerBrush}" Margin="0,14,0,12" />
+                            <Grid>
+                                <StackPanel>
+                                    <TextBlock Text="主页控件" Style="{StaticResource SectionTitle}" FontSize="13" />
+                                    <TextBlock Text="关闭后控件会从主页隐藏，布局与尺寸仍会保留。"
+                                               Style="{StaticResource SectionHint}" />
+                                </StackPanel>
+                                <TextBlock Text="显隐" Style="{StaticResource CaptionText}" FontSize="8.5"
+                                           HorizontalAlignment="Right" VerticalAlignment="Center" />
+                            </Grid>
+                            <ItemsControl ItemsSource="{Binding HomeWidgets}" Margin="0,9,0,0">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="0,0,0,7">
+                                            <TextBlock Text="{Binding Title}" FontSize="10.5"
+                                                       VerticalAlignment="Center" />
+                                            <CheckBox Style="{StaticResource SwitchToggle}"
+                                                      AutomationProperties.Name="{Binding Title}"
+                                                      AutomationProperties.AutomationId="HomeWidgetToggle"
+                                                      IsChecked="{Binding IsVisible, Mode=TwoWay}"
+                                                      HorizontalAlignment="Right" VerticalAlignment="Center" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </ContentControl>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1">
+                    <!-- Live preview -->
+                    <ContentControl Style="{StaticResource FrostedPanel}" Padding="16">
+                        <StackPanel>
+                            <Grid>
+                                <TextBlock Text="实时预览" Style="{StaticResource SectionTitle}" FontSize="15" />
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                    <Ellipse Width="6" Height="6" Fill="{DynamicResource SuccessBrush}" />
+                                    <TextBlock Text="LIVE" Style="{StaticResource CaptionText}" FontSize="9" Margin="5,0,0,0" />
+                                </StackPanel>
+                            </Grid>
+
+                            <Border Background="{DynamicResource BackgroundBrush}" CornerRadius="11"
+                                    BorderBrush="{DynamicResource DividerBrush}" BorderThickness="1"
+                                    Height="208" ClipToBounds="True" Margin="0,13,0,0">
+                                <Grid>
+                                    <Ellipse Width="180" Height="180" HorizontalAlignment="Right" VerticalAlignment="Top"
+                                             Margin="0,-80,-50,0">
+                                        <Ellipse.Fill>
+                                            <RadialGradientBrush>
+                                                <GradientStop Offset="0" Color="#664ADE80" />
+                                                <GradientStop Offset="1" Color="#004ADE80" />
+                                            </RadialGradientBrush>
+                                        </Ellipse.Fill>
+                                    </Ellipse>
+                                    <Grid Margin="10">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="23" />
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+                                        <Border Background="{DynamicResource TitleBarBrush}" CornerRadius="6" Padding="8,0">
+                                            <Grid>
+                                                <TextBlock Text="QS" FontSize="8" FontWeight="Bold"
+                                                           VerticalAlignment="Center" />
+                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"
+                                                            VerticalAlignment="Center">
+                                                    <Ellipse Width="3" Height="3" Fill="{DynamicResource TextTertiaryBrush}" Margin="0,0,3,0" />
+                                                    <Ellipse Width="3" Height="3" Fill="{DynamicResource TextTertiaryBrush}" Margin="0,0,3,0" />
+                                                    <Ellipse Width="3" Height="3" Fill="{DynamicResource TextTertiaryBrush}" />
+                                                </StackPanel>
+                                            </Grid>
+                                        </Border>
+                                        <Grid Grid.Row="1" Margin="0,6,0,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="48" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <Border Background="{DynamicResource SidebarBrush}" CornerRadius="6"
+                                                    BorderBrush="{DynamicResource DividerBrush}" BorderThickness="1" />
+                                            <Grid Grid.Column="1" Margin="7,0,0,0">
+                                                <Border Background="{DynamicResource GlassBrush}"
+                                                        BorderBrush="{DynamicResource GlassBorderBrush}"
+                                                        BorderThickness="1" CornerRadius="7" Padding="10">
+                                                    <StackPanel VerticalAlignment="Center">
+                                                        <TextBlock Text="你的世界" FontSize="12" FontWeight="SemiBold" />
+                                                        <TextBlock Text="一个安静的工作台。" Style="{StaticResource CaptionText}"
+                                                                   FontSize="8.5" Margin="0,3,0,0" />
+                                                        <Border Background="{DynamicResource AccentBrush}" CornerRadius="4"
+                                                                Height="19" Width="70" HorizontalAlignment="Left" Margin="0,10,0,0">
+                                                            <TextBlock Text="启动" FontSize="8" FontWeight="SemiBold"
+                                                                       Foreground="{DynamicResource AccentTextBrush}"
+                                                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                        </Border>
+                                                    </StackPanel>
+                                                </Border>
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+                            </Border>
+                            <TextBlock Text="主题、强调色、背景与材质都会同步到这里。"
+                                       Style="{StaticResource CaptionText}" FontSize="9.5" Margin="0,9,0,0"
+                                       TextWrapping="Wrap" LineHeight="14" />
+                        </StackPanel>
+                    </ContentControl>
+
+                    <!-- Accounts -->
+                    <ContentControl Style="{StaticResource FrostedPanel}" Margin="0,14,0,0" Padding="16">
+                        <StackPanel>
+                            <Grid>
+                                <TextBlock Text="账户与登录" Style="{StaticResource SectionTitle}" FontSize="15" />
+                                <Path Data="{StaticResource IconAccount}" Stroke="{DynamicResource TextTertiaryBrush}"
+                                      StrokeThickness="1.5" Width="16" Height="16" Stretch="Uniform"
+                                      HorizontalAlignment="Right" VerticalAlignment="Top" />
+                            </Grid>
+                            <TextBlock Text="微软、离线与第三方 Yggdrasil 登录。"
+                                       Style="{StaticResource SectionHint}" FontSize="9.5" TextWrapping="Wrap" />
+
+                            <Border Background="{DynamicResource InputBrush}" BorderBrush="{DynamicResource InputBorderBrush}"
+                                    BorderThickness="1" CornerRadius="9" Padding="10" Margin="0,12,0,0">
+                                <Grid>
+                                    <StackPanel>
+                                        <TextBlock Text="微软正版" FontSize="11.5" FontWeight="Medium" />
+                                        <TextBlock Text="设备代码登录，需配置 Azure 客户端 ID" Style="{StaticResource CaptionText}"
+                                                   FontSize="9" Margin="0,2,0,0" />
+                                    </StackPanel>
+                                    <Border Style="{StaticResource Pill}" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                            Background="{DynamicResource AccentSoftBrush}" Padding="7,3">
+                                        <TextBlock Text="已接入" FontSize="8.5" Foreground="{DynamicResource AccentBrush}" />
+                                    </Border>
+                                </Grid>
+                            </Border>
+                            <Border Background="{DynamicResource InputBrush}" BorderBrush="{DynamicResource InputBorderBrush}"
+                                    BorderThickness="1" CornerRadius="9" Padding="10" Margin="0,7,0,0">
+                                <Grid>
+                                    <StackPanel>
+                                        <TextBlock Text="离线账户" FontSize="11.5" FontWeight="Medium" />
+                                        <TextBlock Text="本地档案，不联网验证" Style="{StaticResource CaptionText}"
+                                                   FontSize="9" Margin="0,2,0,0" />
+                                    </StackPanel>
+                                    <Border Style="{StaticResource Pill}" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                            Background="{DynamicResource AccentSoftBrush}" Padding="7,3">
+                                        <TextBlock Text="可用" FontSize="8.5"
+                                                   Foreground="{DynamicResource AccentBrush}" />
+                                    </Border>
+                                </Grid>
+                            </Border>
+                            <Border Background="{DynamicResource InputBrush}" BorderBrush="{DynamicResource InputBorderBrush}"
+                                    BorderThickness="1" CornerRadius="9" Padding="10" Margin="0,7,0,0">
+                                <Grid>
+                                    <StackPanel>
+                                        <TextBlock Text="第三方 Yggdrasil" FontSize="11.5" FontWeight="Medium" />
+                                        <TextBlock Text="LittleSkin 等皮肤站" Style="{StaticResource CaptionText}"
+                                                   FontSize="9" Margin="0,2,0,0" />
+                                    </StackPanel>
+                                    <Border Style="{StaticResource Pill}" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                            Background="{DynamicResource AccentSoftBrush}" Padding="7,3">
+                                        <TextBlock Text="可用" FontSize="8.5"
+                                                   Foreground="{DynamicResource AccentBrush}" />
+                                    </Border>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </ContentControl>
+
+                    <!-- Portable data -->
+                    <ContentControl Style="{StaticResource FrostedPanel}" Margin="0,14,0,0" Padding="16">
+                        <StackPanel>
+                            <TextBlock Text="便携与数据" Style="{StaticResource SectionTitle}" FontSize="15" />
+                            <TextBlock Text="{Binding VersionText, StringFormat=QS Launcher {0}}"
+                                       Style="{StaticResource CaptionText}" FontSize="9.5" Margin="0,4,0,0" />
+
+                            <Border Background="{DynamicResource InputBrush}" BorderBrush="{DynamicResource InputBorderBrush}"
+                                    BorderThickness="1" CornerRadius="8" Padding="9" Margin="0,10,0,0">
+                                <TextBlock Text="{Binding DataRoot}" FontFamily="{DynamicResource MonoFont}"
+                                           FontSize="9" Foreground="{DynamicResource TextSecondaryBrush}"
+                                           TextWrapping="Wrap" LineHeight="14" />
+                            </Border>
+
+                            <Button Style="{StaticResource SecondaryButton}"
+                                    Command="{Binding OpenDataFolderCommand}"
+                                    HorizontalContentAlignment="Left" Padding="10,7" Margin="0,9,0,0">
+                                <StackPanel Orientation="Horizontal">
+                                    <Path Data="{StaticResource IconFolderOpen}"
+                                          Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                          StrokeThickness="1.5" Width="13" Height="13" Stretch="Uniform"
+                                          VerticalAlignment="Center" />
+                                    <TextBlock Text="打开数据目录" FontSize="10.5" Margin="7,0,0,0" />
+                                </StackPanel>
+                            </Button>
+                            <Button Style="{StaticResource GhostButton}"
+                                    Command="{Binding OpenBackgroundsFolderCommand}"
+                                    HorizontalContentAlignment="Left" Padding="9,6" Margin="0,4,0,0">
+                                <TextBlock Text="打开背景素材目录" FontSize="10.5" />
+                            </Button>
+
+                            <Border Height="1" Background="{DynamicResource DividerBrush}" Margin="0,11,0,0" />
+                            <Button Style="{StaticResource GhostButton}"
+                                    Command="{Binding ResetAppearanceCommand}"
+                                    HorizontalContentAlignment="Left" Padding="9,7" Margin="0,7,0,0">
+                                <StackPanel Orientation="Horizontal">
+                                    <Path Data="{StaticResource IconRefresh}"
+                                          Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                          StrokeThickness="1.5" Width="13" Height="13" Stretch="Uniform"
+                                          VerticalAlignment="Center" />
+                                    <TextBlock Text="恢复默认外观" FontSize="10.5" Margin="7,0,0,0" />
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </ContentControl>
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
