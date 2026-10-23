@@ -203,7 +203,8 @@ data/
 
 ### 许可证与原创性
 
-本项目以 **GNU General Public License v3.0** 发布，完整文本见 [LICENSE](LICENSE)。
+本项目以 **GNU General Public License v3.0** 发布，完整文本见 [LICENSE](LICENSE)。  
+Copyright (C) 2026 QiuSui1145，额外声明见 [NOTICE](NOTICE)。
 
 界面、导航、卡片、弹窗、配色、动画和文案均为本项目独立设计，没有复制或反编译其他启动器的代码、图标、字体、XAML 或素材。第三方组件与许可证见项目依赖说明。
 
@@ -393,7 +394,8 @@ See [`video/README.md`](video/README.md) and [`docs/VIDEO_SCRIPT.md`](docs/VIDEO
 
 ### License and originality
 
-Licensed under the **GNU General Public License v3.0**. See [LICENSE](LICENSE).
+Licensed under the **GNU General Public License v3.0**. See [LICENSE](LICENSE).  
+Copyright (C) 2026 QiuSui1145. Additional notices are in [NOTICE](NOTICE).
 
 The UI, navigation, cards, dialogs, colors, animation, and copy are original to this project. No code, icon, font, XAML, or asset from another launcher is copied or decompiled. Third-party dependencies retain their own licenses.
 
